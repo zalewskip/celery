@@ -25,7 +25,8 @@ class ElasticsearchBackend(KeyValueStoreBackend):
         celery.exceptions.ImproperlyConfigured:
             if module :pypi:`elasticsearch` is not available.
     """
-
+    
+    key_t = str
     index = 'celery'
     doc_type = 'backend'
     scheme = 'http'
@@ -89,6 +90,7 @@ class ElasticsearchBackend(KeyValueStoreBackend):
 
     def _index(self, id, body, **kwargs):
         return self.server.index(
+            id=id,
             index=self.index,
             doc_type=self.doc_type,
             body=body,
@@ -103,7 +105,7 @@ class ElasticsearchBackend(KeyValueStoreBackend):
 
     def _get_server(self):
         """Connect to the Elasticsearch server."""
-        return elasticsearch.Elasticsearch(self.host)
+        return elasticsearch.Elasticsearch(self.host, port=self.port)
 
     @property
     def server(self):
